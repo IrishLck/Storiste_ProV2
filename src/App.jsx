@@ -37,6 +37,21 @@ const butlerPrix = {
 };
 
 export default function App() {
+  const [prixSolopaque, setPrixSolopaque] = useState([]);
+  useEffect(() => {
+    fetch('/data/prix-faber-solopaque.csv')
+      .then(res => res.text())
+      .then(data => {
+        Papa.parse(data, {
+          header: true,
+          skipEmptyLines: true,
+          complete: result => {
+            setPrixSolopaque(result.data);
+          }
+        });
+      });
+  }, []);
+
   const [client, setClient] = useState({ nom: "", prenom: "", telephone: "", courriel: "", adresse: "", ville: "" });
   const [fenetres, setFenetres] = useState([]);
   const [fenetre, setFenetre] = useState({
