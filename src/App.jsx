@@ -23,6 +23,7 @@ const controles = ["Gauche", "Droite"];
 const fractions = ["", "1/8", "1/4", "3/8", "1/2", "5/8", "3/4", "7/8"];
 
 export default function App() {
+  const [grilleProduit, setGrilleProduit] = useState([]);
   const [prixSolopaque, setPrixSolopaque] = useState([]);
   useEffect(() => {
     fetch('/data/prix-faber-solopaque.csv')
@@ -217,3 +218,18 @@ export default function App() {
       </div>
     </div>
   );
+
+useEffect(() => {
+  if (!fenetre.fabricant || !fenetre.produit) return;
+  const nomFichier = `/data/prix-${fenetre.fabricant.toLowerCase()}-${fenetre.produit.toLowerCase().replace(/ %/g, 'pct').replace(/\s+/g, '-')}.csv`;
+
+  fetch(nomFichier)
+    .then(res => res.text())
+    .then(data => {
+      Papa.parse(data, {
+        header: true,
+        skipEmptyLines: true,
+        complete: result => setGrilleProduit(result.data)
+      });
+    });
+}, [fenetre.fabricant, fenetre.produit]);
