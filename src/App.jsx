@@ -42,7 +42,7 @@ export default function App() {
     return valeurs.find(v => v >= val);
   };
 
-  const dimensionsDisponibles = Object.keys(butlerPrix).map(k => k.split("x").map(Number));
+  const dimensionsDisponibles = Object.keys(prixButler.find).map(k => k.split("x").map(Number));
   const largeursDisponibles = [...new Set(dimensionsDisponibles.map(([l]) => l))].sort((a, b) => a - b);
   const hauteursDisponibles = [...new Set(dimensionsDisponibles.map(([, h]) => h))].sort((a, b) => a - b);
 
@@ -51,8 +51,8 @@ export default function App() {
 
   const key = `${largeurArr}x${hauteurArr}`;
   let prixBase = 0;
-  if (fenetre.fabricant === "Faber" && fenetre.produit === "Butler" && butlerPrix[key]) {
-    prixBase = butlerPrix[key];
+  if (fenetre.fabricant === "Faber" && fenetre.produit === "Butler" && prixButler.find) {
+    prixBase = prixButler.find;
   }
   const prixListe = prixBase * 1.1;
   const coutant = prixListe * 0.3;
