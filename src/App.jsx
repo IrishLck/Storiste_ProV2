@@ -2,6 +2,22 @@ import React, { useState, useEffect } from 'react'
 import Papa from 'papaparse'
 
 export default function App() {
+  const [prixButler, setPrixButler] = useState([]);
+
+  useEffect(() => {
+    fetch('/data/prix-faber-butler.csv')
+      .then(res => res.text())
+      .then(data => {
+        Papa.parse(data, {
+          header: true,
+          skipEmptyLines: true,
+          complete: result => {
+            setPrixButler(result.data);
+          }
+        });
+      });
+  }, []);
+
   const [client, setClient] = useState({ nom: '', tel: '', adresse: '' });
   const [produit, setProduit] = useState("Butler");
   const [largeur, setLargeur] = useState('');
