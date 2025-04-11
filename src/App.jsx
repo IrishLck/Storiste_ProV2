@@ -77,8 +77,6 @@ export default function App() {
 
   const key = `${largeurArr}x${hauteurArr}`;
   let prixBase = 0;
-  if (fenetre.fabricant === "Faber" && fenetre.produit === "Butler" && butlerPrix[key]) {
-    prixBase = butlerPrix[key];
   }
   const prixListe = prixBase * 1.1;
   const coutant = prixListe * 0.3;
