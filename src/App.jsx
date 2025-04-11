@@ -1,7 +1,5 @@
 // ✅ Version corrigée avec composants HTML natifs pour compatibilité immédiate
-
 import { useState } from "react";
-
 const fabricants = ["Faber", "Altex", "Ambiance Déco", "Persienne Design", "Sol-r"];
 const produitsParFabricant = {
   Faber: ["Butler", "Solopaque", "Screen 3%", "Screen 5%"],
@@ -35,8 +33,19 @@ const butlerPrix = {
   "36x132": 306, "42x132": 327, "48x132": 378, "54x132": 402, "60x132": 427, "66x132": 451, "72x132": 475, "78x132": 499, "84x132": 523, "96x132": 568, "108x132": 616, "120x132": 665, "132x132": 732, "144x132": 798,
   "36x144": 351, "42x144": 378, "48x144": 402, "54x144": 427, "60x144": 451, "66x144": 475, "72x144": 499, "78x144": 523, "84x144": 547, "96x144": 596, "108x144": 649, "120x144": 697, "132x144": 767, "144x144": 836
 };
-
 export default function App() {
+  const [prixSolopaque, setPrixSolopaque] = useState([]);
+  useEffect(() => {
+    fetch('/data/prix-faber-solopaque.csv')
+      .then(res => res.text())
+      .then(data => {
+        Papa.parse(data, {
+          header: true,
+          skipEmptyLines: true,
+          complete: result => setPrixSolopaque(result.data)
+        });
+      });
+  }, []);
   const [client, setClient] = useState({ nom: "", prenom: "", telephone: "", courriel: "", adresse: "", ville: "" });
   const [fenetres, setFenetres] = useState([]);
   const [fenetre, setFenetre] = useState({
@@ -45,32 +54,24 @@ export default function App() {
     controle: "", mecanisme: "", moteur: "", poseInterieure: false, poseMurale: false, inverse: false,
     cassette: "", couleurCassette: "", prixListe: 0, coutant: 0, prixVente: 0
   });
-
   const ajouterFenetre = () => {
   const largeur = parseInt(fenetre.largeur);
   const hauteur = parseInt(fenetre.hauteur);
-
   const trouverPlusProche = (val, valeurs) => {
     return valeurs.find(v => v >= val);
   };
-
   const dimensionsDisponibles = Object.keys(butlerPrix).map(k => k.split("x").map(Number));
   const largeursDisponibles = [...new Set(dimensionsDisponibles.map(([l]) => l))].sort((a, b) => a - b);
   const hauteursDisponibles = [...new Set(dimensionsDisponibles.map(([, h]) => h))].sort((a, b) => a - b);
-
   const largeurArr = trouverPlusProche(largeur, largeursDisponibles);
   const hauteurArr = trouverPlusProche(hauteur, hauteursDisponibles);
-
   const key = `${largeurArr}x${hauteurArr}`;
   let prixBase = 0;
-  if (fenetre.fabricant === "Faber" && fenetre.produit === "Butler" && butlerPrix[key]) {
-    prixBase = butlerPrix[key];
   }
   const prixListe = prixBase * 1.1;
   const coutant = prixListe * 0.3;
   const prixVente = prixListe * 0.47;
   const quantite = fenetre.quantite || 1;
-
   setFenetres([...fenetres, {
     ...fenetre,
     id: Date.now(),
@@ -82,17 +83,14 @@ export default function App() {
     key,
     quantite
   }]);
-
   setFenetre({
     fabricant: "", produit: "", tissu: "", couleur: "", largeur: "", largeurFraction: "0/8", hauteur: "", hauteurFraction: "0/8",
     controle: "", mecanisme: "", moteur: "", poseInterieure: false, poseMurale: false, inverse: false,
     cassette: "", couleurCassette: "", prixListe: 0, coutant: 0, prixVente: 0
   });
 };
-
   return (
     <div className="max-w-4xl mx-auto p-6 space-y-6">
-      
       <div className="border rounded p-4 bg-white">
         <h2 className="text-xl font-bold mb-4">Fiche client</h2>
         <div className="grid grid-cols-2 gap-4">
@@ -107,7 +105,6 @@ export default function App() {
           ))}
         </div>
       </div>
-
       <div className="border rounded p-4 bg-white">
         <h2 className="text-xl font-bold mb-4">Nouvelle Fenêtre</h2>
         <input
@@ -116,12 +113,10 @@ export default function App() {
           onChange={(e) => setFenetre({ ...fenetre, nom: e.target.value })}
           className="border p-2 mb-2 w-full"
         />
-
         <select onChange={e => setFenetre({ ...fenetre, fabricant: e.target.value })} className="border p-2 mb-2 w-full">
           <option>Fabricant</option>
           {fabricants.map(f => <option key={f}>{f}</option>)}
         </select>
-
         <div className="grid grid-cols-2 gap-4 mb-2">
           <select onChange={e => setFenetre({ ...fenetre, produit: e.target.value })} className="border p-2">
             <option>Produit</option>
@@ -132,7 +127,6 @@ export default function App() {
             {tissus.map(c => <option key={c}>{c}</option>)}
           </select>
         </div>
-
         <div className="grid grid-cols-6 gap-4 mb-2">
           <input placeholder="Largeur" value={fenetre.largeur} onChange={e => setFenetre({ ...fenetre, largeur: e.target.value })} className="border p-2" />
           <select value={fenetre.largeurFraction} onChange={e => setFenetre({ ...fenetre, largeurFraction: e.target.value })} className="border p-2">
@@ -147,13 +141,11 @@ export default function App() {
             {controles.map(c => <option key={c}>{c}</option>)}
           </select>
         </div>
-
         <div className="flex gap-4 mb-2">
           <label><input type="checkbox" checked={fenetre.poseInterieure} onChange={e => setFenetre({ ...fenetre, poseInterieure: e.target.checked })} /> Pose intérieure</label>
           <label><input type="checkbox" checked={fenetre.poseMurale} onChange={e => setFenetre({ ...fenetre, poseMurale: e.target.checked })} /> Pose murale</label>
           <label><input type="checkbox" checked={fenetre.inverse} onChange={e => setFenetre({ ...fenetre, inverse: e.target.checked })} /> Enroulement inversé</label>
         </div>
-
         <div className="grid grid-cols-2 gap-4 mb-2">
           <select onChange={e => setFenetre({ ...fenetre, cassette: e.target.value })} className="border p-2">
             <option>Cassette</option>
@@ -164,22 +156,18 @@ export default function App() {
             {couleurs.map(c => <option key={c}>{c}</option>)}
           </select>
         </div>
-
         <select onChange={e => setFenetre({ ...fenetre, mecanisme: e.target.value })} className="border p-2 mb-2 w-full">
           <option>Système de contrôle</option>
           {(mecanismesParFabricant[fenetre.fabricant] || []).map(m => <option key={m}>{m}</option>)}
         </select>
-
         {fenetre.mecanisme === "Motorisation" && (
           <select onChange={e => setFenetre({ ...fenetre, moteur: e.target.value })} className="border p-2 mb-2 w-full">
             <option>Type de moteur</option>
             {moteurs.map(m => <option key={m}>{m}</option>)}
           </select>
         )}
-
         <button onClick={ajouterFenetre} className="bg-blue-600 text-white px-4 py-2 rounded">Ajouter la fenêtre</button>
       </div>
-
             <div className="border rounded p-4 bg-white">
         <h3 className="font-semibold mb-2">Soumission</h3>
         {fenetres.map((f, i) => (
@@ -230,7 +218,6 @@ export default function App() {
           </div>
         ))}
       </div>
-
       <div className="border rounded p-4 bg-white">
         <h2 className="text-xl font-bold mb-2">Notes</h2>
         <textarea
@@ -241,4 +228,3 @@ export default function App() {
       </div>
     </div>
   );
-}
