@@ -1,3 +1,4 @@
+import Papa from 'papaparse'
 // ✅ Version corrigée avec composants HTML natifs pour compatibilité immédiate
 
 import { useState } from "react";
@@ -37,17 +38,27 @@ const butlerPrix = {
 };
 
 export default function App() {
+  const [prixButler, setPrixButler] = useState([]);
   const [prixSolopaque, setPrixSolopaque] = useState([]);
+
   useEffect(() => {
+    fetch('/data/prix-faber-butler.csv')
+      .then(res => res.text())
+      .then(data => {
+        Papa.parse(data, {
+          header: true,
+          skipEmptyLines: true,
+          complete: result => setPrixButler(result.data)
+        });
+      });
+
     fetch('/data/prix-faber-solopaque.csv')
       .then(res => res.text())
       .then(data => {
         Papa.parse(data, {
           header: true,
           skipEmptyLines: true,
-          complete: result => {
-            setPrixSolopaque(result.data);
-          }
+          complete: result => setPrixSolopaque(result.data)
         });
       });
   }, []);
