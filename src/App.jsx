@@ -23,7 +23,6 @@ const controles = ["Gauche", "Droite"];
 const fractions = ["", "1/8", "1/4", "3/8", "1/2", "5/8", "3/4", "7/8"];
 
 export default function App() {
-  const [grilleProduit, setGrilleProduit] = useState([]);
   const [prixSolopaque, setPrixSolopaque] = useState([]);
   useEffect(() => {
     fetch('/data/prix-faber-solopaque.csv')
@@ -50,21 +49,13 @@ export default function App() {
   const trouverPlusProche = (val, valeurs) => {
     return valeurs.find(v => v >= val);
   };
-  const dimensionsDisponibles = grilleProduit.map(p => [parseInt(p.Largeur), parseInt(p.Hauteur)]);
+  const dimensionsDisponibles = Object.keys(butlerPrix).map(k => k.split("x").map(Number));
   const largeursDisponibles = [...new Set(dimensionsDisponibles.map(([l]) => l))].sort((a, b) => a - b);
   const hauteursDisponibles = [...new Set(dimensionsDisponibles.map(([, h]) => h))].sort((a, b) => a - b);
   const largeurArr = trouverPlusProche(largeur, largeursDisponibles);
   const hauteurArr = trouverPlusProche(hauteur, hauteursDisponibles);
   const key = `${largeurArr}x${hauteurArr}`;
-  
-  const match = grilleProduit.find(p =>
-    parseInt(p.Largeur) === largeurArr && parseInt(p.Hauteur) === hauteurArr
-  );
   let prixBase = 0;
-  if (match) {
-    prixBase = parseFloat(match.Prix);
-  }
-
   }
   const prixListe = prixBase * 1.1;
   const coutant = prixListe * 0.3;
@@ -87,7 +78,7 @@ export default function App() {
     cassette: "", couleurCassette: "", prixListe: 0, coutant: 0, prixVente: 0
   });
 };
-  }  return (
+  return (
     <div className="max-w-4xl mx-auto p-6 space-y-6">
       <div className="border rounded p-4 bg-white">
         <h2 className="text-xl font-bold mb-4">Fiche client</h2>
@@ -226,18 +217,3 @@ export default function App() {
       </div>
     </div>
   );
-
-useEffect(() => {
-  if (!fenetre.fabricant || !fenetre.produit) return;
-  const nomFichier = `/data/prix-${fenetre.fabricant.toLowerCase()}-${fenetre.produit.toLowerCase().replace(/ %/g, 'pct').replace(/\s+/g, '-')}.csv`;
-
-  fetch(nomFichier)
-    .then(res => res.text())
-    .then(data => {
-      Papa.parse(data, {
-        header: true,
-        skipEmptyLines: true,
-        complete: result => setGrilleProduit(result.data)
-      });
-    });
-}, [fenetre.fabricant, fenetre.produit]);
