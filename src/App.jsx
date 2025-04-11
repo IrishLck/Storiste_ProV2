@@ -37,20 +37,6 @@ const butlerPrix = {
 };
 
 export default function App() {
-  const [prixSolopaque, setPrixSolopaque] = useState([]);
-
-  useEffect(() => {
-    fetch('/data/prix-faber-solopaque.csv')
-      .then(res => res.text())
-      .then(data => {
-        Papa.parse(data, {
-          header: true,
-          skipEmptyLines: true,
-          complete: result => setPrixSolopaque(result.data)
-        });
-      });
-  }, []);
-
   const [client, setClient] = useState({ nom: "", prenom: "", telephone: "", courriel: "", adresse: "", ville: "" });
   const [fenetres, setFenetres] = useState([]);
   const [fenetre, setFenetre] = useState({
@@ -77,6 +63,8 @@ export default function App() {
 
   const key = `${largeurArr}x${hauteurArr}`;
   let prixBase = 0;
+  if (fenetre.fabricant === "Faber" && fenetre.produit === "Butler" && butlerPrix[key]) {
+    prixBase = butlerPrix[key];
   }
   const prixListe = prixBase * 1.1;
   const coutant = prixListe * 0.3;
