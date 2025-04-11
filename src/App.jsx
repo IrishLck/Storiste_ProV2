@@ -1,4 +1,3 @@
-import Papa from 'papaparse'
 // ✅ Version corrigée avec composants HTML natifs pour compatibilité immédiate
 
 import { useState } from "react";
@@ -38,21 +37,6 @@ const butlerPrix = {
 };
 
 export default function App() {
-  const [prixButler, setPrixButler] = useState([]);
-  useEffect(() => {
-    fetch('/data/prix-faber-butler.csv')
-      .then(res => res.text())
-      .then(data => {
-        Papa.parse(data, {
-          header: true,
-          skipEmptyLines: true,
-          complete: result => {
-            setPrixButler(result.data);
-          }
-        });
-      });
-  }, []);
-
   const [client, setClient] = useState({ nom: "", prenom: "", telephone: "", courriel: "", adresse: "", ville: "" });
   const [fenetres, setFenetres] = useState([]);
   const [fenetre, setFenetre] = useState({
