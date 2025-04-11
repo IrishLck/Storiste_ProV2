@@ -56,7 +56,15 @@ export default function App() {
   const largeurArr = trouverPlusProche(largeur, largeursDisponibles);
   const hauteurArr = trouverPlusProche(hauteur, hauteursDisponibles);
   const key = `${largeurArr}x${hauteurArr}`;
+  
+  const match = grilleProduit.find(p =>
+    parseInt(p.Largeur) === largeurArr && parseInt(p.Hauteur) === hauteurArr
+  );
   let prixBase = 0;
+  if (match) {
+    prixBase = parseFloat(match.Prix);
+  }
+
   }
   const prixListe = prixBase * 1.1;
   const coutant = prixListe * 0.3;
