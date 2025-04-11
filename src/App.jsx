@@ -50,7 +50,7 @@ export default function App() {
   const trouverPlusProche = (val, valeurs) => {
     return valeurs.find(v => v >= val);
   };
-  const dimensionsDisponibles = Object.keys(butlerPrix).map(k => k.split("x").map(Number));
+  const dimensionsDisponibles = grilleProduit.map(p => [parseInt(p.Largeur), parseInt(p.Hauteur)]);
   const largeursDisponibles = [...new Set(dimensionsDisponibles.map(([l]) => l))].sort((a, b) => a - b);
   const hauteursDisponibles = [...new Set(dimensionsDisponibles.map(([, h]) => h))].sort((a, b) => a - b);
   const largeurArr = trouverPlusProche(largeur, largeursDisponibles);
@@ -87,7 +87,8 @@ export default function App() {
     cassette: "", couleurCassette: "", prixListe: 0, coutant: 0, prixVente: 0
   });
 };
-  return (
+
+  }  return (
     <div className="max-w-4xl mx-auto p-6 space-y-6">
       <div className="border rounded p-4 bg-white">
         <h2 className="text-xl font-bold mb-4">Fiche client</h2>
