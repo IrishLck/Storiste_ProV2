@@ -50,7 +50,7 @@ export default function App() {
   const trouverPlusProche = (val, valeurs) => {
     return valeurs.find(v => v >= val);
   };
-  const dimensionsDisponibles = Object.keys(butlerPrix).map(k => k.split("x").map(Number));
+  const dimensionsDisponibles = grilleProduit.map(p => [parseInt(p.Largeur), parseInt(p.Hauteur)]);
   const largeursDisponibles = [...new Set(dimensionsDisponibles.map(([l]) => l))].sort((a, b) => a - b);
   const hauteursDisponibles = [...new Set(dimensionsDisponibles.map(([, h]) => h))].sort((a, b) => a - b);
   const largeurArr = trouverPlusProche(largeur, largeursDisponibles);
